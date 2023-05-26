@@ -6,7 +6,7 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 
-ABSL_FLAG(std::string, input_path, "", "Input file path");
+ABSL_FLAG(std::string, input_path, "/opt/work/xh/zuckerli/testdata/output", "Input file path");
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);

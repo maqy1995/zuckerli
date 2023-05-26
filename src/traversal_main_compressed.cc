@@ -8,7 +8,7 @@
 #include "absl/flags/parse.h"
 #include "uncompressed_graph.h"
 
-ABSL_FLAG(std::string, input_path, "", "Input file path.");
+ABSL_FLAG(std::string, input_path, "/opt/work/xh/zuckerli/testdata/output", "Input file path.");
 ABSL_FLAG(bool, dfs, false, "Run DFS (as opposed to BFS)?");
 ABSL_FLAG(bool, print, false, "Print node indices during traversal?");
 
@@ -84,6 +84,11 @@ int main(int argc, char* argv[]) {
   absl::ParseCommandLine(argc, argv);
   zuckerli::CompressedGraph graph(absl::GetFlag(FLAGS_input_path));
   std::cout << "This graph has " << graph.size() << " nodes." << std::endl;
+  auto nbrs = graph.Neighbours(1);
+  for (auto nbr : nbrs){
+      std::cout<< nbr << " ";
+  }
+  std::cout<<std::endl;
   if (absl::GetFlag(FLAGS_dfs)) {
     TimedDFS(graph, absl::GetFlag(FLAGS_print));
   } else {
