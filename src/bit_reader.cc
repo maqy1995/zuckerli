@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "bit_reader.h"
+#include "../include/bit_reader.h"
 
 namespace zuckerli {
 BitReader::BitReader(const uint8_t *ZKR_RESTRICT data, size_t size)

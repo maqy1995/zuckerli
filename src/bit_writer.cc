@@ -11,11 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "bit_writer.h"
+#include "../include/bit_writer.h"
 
 #include <string.h>
 
-#include "common.h"
+#include "../include/common.h"
 
 namespace zuckerli {
 void BitWriter::Write(size_t nbits, size_t bits) {

@@ -1,14 +1,14 @@
-#include "compressed_graph.h"
+#include "../include/compressed_graph.h"
 
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
 
-#include "common.h"
-#include "context_model.h"
-#include "decode.h"
-#include "integer_coder.h"
+#include "../include/common.h"
+#include "../include/context_model.h"
+#include "../include/decode.h"
+#include "../include/integer_coder.h"
 
 namespace zuckerli {
 

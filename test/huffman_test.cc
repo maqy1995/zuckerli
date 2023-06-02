@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ans.h"
+#include "../include/huffman.h"
+
+#include <gtest/gtest.h>
 
 #include <random>
 
-#include "bit_reader.h"
-#include "integer_coder.h"
-#include "gtest/gtest.h"
+#include "../include/bit_reader.h"
+#include "../include/integer_coder.h"
 
 namespace zuckerli {
 namespace {
 
-TEST(ANSTest, TestRoundtrip) {
+TEST(HuffmanTest, TestRoundtrip) {
   constexpr size_t kNumIntegers = 1 << 24;
   constexpr size_t kNumContexts = 128;
 
@@ -42,18 +43,17 @@ TEST(ANSTest, TestRoundtrip) {
 
   BitWriter writer;
   std::vector<double> unused_bits_per_ctx;
-  ANSEncode(data, kNumContexts, &writer, &unused_bits_per_ctx);
+  HuffmanEncode(data, kNumContexts, &writer, {}, &unused_bits_per_ctx);
 
   std::vector<uint8_t> encoded = std::move(writer).GetData();
   BitReader reader(encoded.data(), encoded.size());
-  ANSReader symbol_reader;
+  HuffmanReader symbol_reader;
   ASSERT_TRUE(symbol_reader.Init(kNumContexts, &reader));
 
   for (size_t i = 0; i < kNumIntegers; i++) {
     EXPECT_EQ(IntegerCoder::Read(data.Context(i), &reader, &symbol_reader),
               data.Value(i));
   }
-  EXPECT_TRUE(symbol_reader.CheckFinalState());
 }
 
 }  // namespace

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "huffman.h"
+#include "../include/huffman.h"
 
 #include <algorithm>
 
-#include "bit_reader.h"
-#include "common.h"
-#include "integer_coder.h"
+#include "../include/bit_reader.h"
+#include "../include/common.h"
+#include "../include/integer_coder.h"
 
 namespace zuckerli {
 namespace {

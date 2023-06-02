@@ -14,9 +14,9 @@
 #include <random>
 #include <vector>
 
-#include "bit_reader.h"
-#include "bit_writer.h"
-#include "common.h"
+#include "../include/bit_reader.h"
+#include "../include/bit_writer.h"
+#include "../include/common.h"
 #include "gtest/gtest.h"
 
 namespace zuckerli {

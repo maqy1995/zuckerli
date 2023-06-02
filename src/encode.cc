@@ -1,4 +1,4 @@
-#include "encode.h"
+#include "../include/encode.h"
 
 #include <math.h>
 
@@ -6,14 +6,14 @@
 #include <chrono>
 #include <numeric>
 
-#include "ans.h"
-#include "checksum.h"
-#include "common.h"
-#include "context_model.h"
-#include "huffman.h"
-#include "integer_coder.h"
+#include "../include/ans.h"
+#include "../include/checksum.h"
+#include "../include/common.h"
+#include "../include/context_model.h"
+#include "../include/huffman.h"
+#include "../include/integer_coder.h"
 #include "absl/flags/flag.h"
-#include "uncompressed_graph.h"
+#include "../include/uncompressed_graph.h"
 
 ABSL_FLAG(bool, print_bits_breakdown, false,
           "Print a breakdown of where bits are spent");

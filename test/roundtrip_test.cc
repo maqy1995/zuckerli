@@ -11,10 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "decode.h"
-#include "encode.h"
+#include "../include/decode.h"
+#include "../include/encode.h"
 #include "gtest/gtest.h"
-#include "uncompressed_graph.h"
+#include "../include/uncompressed_graph.h"
 
 namespace zuckerli {
 namespace {

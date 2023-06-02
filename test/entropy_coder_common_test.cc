@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "bit_writer.h"
-#include "integer_coder.h"
+#include "../include/bit_writer.h"
+#include "../include/integer_coder.h"
 #include "gtest/gtest.h"
 #include "absl/flags/flag.h"
 

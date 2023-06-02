@@ -1,6 +1,6 @@
-#include "context_model.h"
-#include "encode.h"
-#include "integer_coder.h"
+#include "../include/context_model.h"
+#include "../include/encode.h"
+#include "../include/integer_coder.h"
 #include "absl/flags/flag.h"
 
 ABSL_FLAG(int32_t, log2_num_explicit, 4,

@@ -12,14 +12,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "ans.h"
+#include "../include/ans.h"
 
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 
-#include "bit_reader.h"
-#include "integer_coder.h"
+#include "../include/bit_reader.h"
+#include "../include/integer_coder.h"
 
 namespace zuckerli {
 
