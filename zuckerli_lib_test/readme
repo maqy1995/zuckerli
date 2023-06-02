@@ -1,2 +1,2 @@
-打包后的库可以放在这里，通过g++ main.c -o app -L ./ -l zuckerli 编译后调用。
+打包后的库可以放在这里，通过g++ main.cc -o app -L ./ -l zuckerli 编译后调用。
 注意动态库还需要将该目录加到LD_LIBRARY_PATH中。

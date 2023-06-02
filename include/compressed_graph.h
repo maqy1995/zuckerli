@@ -23,6 +23,8 @@ class CompressedGraph {
   uint32_t Degree(size_t node_id);
   std::vector<uint32_t> Neighbours(size_t node_id);
 
+  std::pair<std::vector<uint32_t>, std::vector<uint32_t>> SampleNeighbors(size_t node_id, size_t num);
+
  private:
   size_t num_nodes_;
   std::vector<uint8_t> compressed_;

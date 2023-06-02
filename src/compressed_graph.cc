@@ -264,4 +264,22 @@ std::vector<uint32_t> CompressedGraph::Neighbours(size_t node_id) {
   return neighbours;
 }  // namespace zuckerli
 
+    std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+    CompressedGraph::SampleNeighbors(size_t node_id, size_t num) {
+        std::vector<uint32_t> srcs;
+        std::vector<uint32_t> dsts;
+        // 先获取所有邻居
+        std::vector<uint32_t> nbrs = Neighbours(node_id);
+        // 选择其中的num个
+        if(nbrs.size() < num) {
+            // 邻居数量不足
+            dsts = nbrs;
+        }else{
+            for(int i = 0; i < num; i++){
+                dsts.push_back(nbrs[i]);
+            }
+        }
+        srcs.assign(dsts.size(), node_id);
+        return std::make_pair(srcs,dsts);
+    }
 }  // namespace zuckerli

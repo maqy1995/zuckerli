@@ -5,8 +5,8 @@
 #include "absl/flags/parse.h"
 #include "uncompressed_graph.h"
 
-ABSL_FLAG(std::string, input_path, "/opt/work/xh/zuckerli/testdata/small", "Input file path");
-ABSL_FLAG(std::string, output_path, "/opt/work/xh/zuckerli/testdata/output", "Output file path");
+ABSL_FLAG(std::string, input_path, "/opt/work/xh/zuckerli/testdata/enron_ascii", "Input file path");
+ABSL_FLAG(std::string, output_path, "/opt/work/xh/zuckerli/testdata/enron_zkr_compress", "Output file path");
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
