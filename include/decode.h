@@ -256,8 +256,8 @@ bool DecodeGraph(const std::vector<uint8_t>& compressed,
       std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
           .count();
 
-  fprintf(stderr, "Decompressed %.2f ME/s (%zu) from %.2f BPE. Checksum: %lx\n",
-          edges / elapsed, edges, 8.0 * compressed.size() / edges, chksum);
+//  fprintf(stderr, "Decompressed %.2f ME/s (%zu) from %.2f BPE. Checksum: %lx\n",
+//          edges / elapsed, edges, 8.0 * compressed.size() / edges, chksum);
   if (checksum) *checksum = chksum;
   return true;
 }

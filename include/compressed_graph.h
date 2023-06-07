@@ -23,7 +23,13 @@ class CompressedGraph {
   uint32_t Degree(size_t node_id);
   std::vector<uint32_t> Neighbours(size_t node_id);
 
-  std::pair<std::vector<uint32_t>, std::vector<uint32_t>> SampleNeighbors(size_t node_id, size_t num);
+  /**
+   * 采样node_id所对应的邻居，返回邻居数量为num.
+   * @param node_id
+   * @param num
+   * @return 采样得到的邻居id，如果邻居数量少于采样数量，则返回所有邻居id
+   */
+  std::vector<uint32_t> SampleNeighbors(size_t node_id, size_t num);
 
  private:
   size_t num_nodes_;

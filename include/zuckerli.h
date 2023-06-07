@@ -10,5 +10,10 @@
 #include <cstdint>
 #include <cstdio>
 
-std::pair<std::vector<uint32_t>, std::vector<uint32_t>> ReadGraphAndSampleNeighbors(size_t node_id, size_t num);
+std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+ReadGraphAndSampleNeighbors(uint32_t node_id, uint32_t num);
+
+std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+ReadGraphAndSampleNeighbors(const std::vector<uint32_t> &node_ids, uint32_t num);
+
 #endif //ZUCKERLI_ZUCKERLI_H
