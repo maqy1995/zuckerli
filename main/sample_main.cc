@@ -25,6 +25,8 @@ int main(int argc, char **argv) {
     std::vector<uint32_t> seed_nodes;
     seed_nodes.push_back(0);
     seed_nodes.push_back(1);
+    zuckerli::CompressedGraph test_g;
+    std::cout<< test_g.size() << std::endl;
     auto coo_pair = ReadGraphAndSampleNeighbors(seed_nodes,2);
     auto srcs = coo_pair.first;
     auto dsts = coo_pair.second;

@@ -1,7 +1,7 @@
 # 需要先将https://github.com/abseil/abseil-cpp下载到目录下
 
 # Zuckerli
-Compression format and data structures for large graphs.
+Compression format and data structures for large graphs. original from:https://github.com/google/zuckerli
 
 ## Cloning and compiling
 

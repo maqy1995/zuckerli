@@ -18,7 +18,8 @@ namespace zuckerli {
 
 class CompressedGraph {
  public:
-  CompressedGraph(const std::string &file);
+  explicit CompressedGraph(const std::string &file);
+  CompressedGraph();
   ZKR_INLINE size_t size() { return num_nodes_; }
   uint32_t Degree(size_t node_id);
   std::vector<uint32_t> Neighbours(size_t node_id);
@@ -30,6 +31,9 @@ class CompressedGraph {
    * @return 采样得到的邻居id，如果邻居数量少于采样数量，则返回所有邻居id
    */
   std::vector<uint32_t> SampleNeighbors(size_t node_id, size_t num);
+
+  std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+  SampleNeighbors(const std::vector<uint32_t> &node_ids, uint32_t num);
 
  private:
   size_t num_nodes_;

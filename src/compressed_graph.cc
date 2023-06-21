@@ -282,13 +282,49 @@ namespace zuckerli {
             // 创建一个均匀分布的随机数生成器
             std::uniform_int_distribution<> dis(0, static_cast<int>(nbrs.size() - 1));
 
-            // 生成随机数
-            int random_number = dis(gen);
             // TODO 目前是可放回的
             for (size_t i = 0; i < num; i++) {
+                // 生成随机数
+                int random_number = dis(gen);
                 dsts.push_back(nbrs[random_number]);
             }
         }
         return dsts;
+    }
+
+    CompressedGraph::CompressedGraph() {
+        num_nodes_ = 0;
+    }
+
+    std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+    CompressedGraph::SampleNeighbors(const std::vector<uint32_t> &node_ids, uint32_t num) {
+        std::vector<std::vector<uint32_t>> nodes_srcs;
+        std::vector<std::vector<uint32_t>> nodes_dsts;
+        nodes_srcs.resize(node_ids.size());
+        nodes_dsts.resize(node_ids.size());
+
+        uint32_t total_nodes_num = 0;
+        for (int i = 0; i < node_ids.size(); i++) {
+            nodes_dsts[i] = SampleNeighbors(node_ids[i], num);
+            // 注意不是原子操作
+            total_nodes_num += nodes_dsts[i].size();
+            nodes_srcs[i].assign(nodes_dsts[i].size(), node_ids[i]);
+        }
+        std::vector<uint32_t> total_srcs;
+        std::vector<uint32_t> total_dsts;
+        total_srcs.reserve(total_nodes_num);
+        total_dsts.reserve(total_nodes_num);
+
+        // 遍历 nodes_srcs
+        for (const auto &vec: nodes_srcs) {
+            // 使用 insert() 将当前的 std::vector<uint32_t> 插入到 total 中
+            total_srcs.insert(total_srcs.end(), vec.begin(), vec.end());
+        }
+        for (const auto &vec: nodes_dsts) {
+            // 使用 insert() 将当前的 std::vector<uint32_t> 插入到 total 中
+            total_dsts.insert(total_dsts.end(), vec.begin(), vec.end());
+        }
+
+        return std::make_pair(total_srcs, total_dsts);
     }
 }  // namespace zuckerli
