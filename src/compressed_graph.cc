@@ -10,6 +10,7 @@
 #include "../include/context_model.h"
 #include "../include/decode.h"
 #include "../include/integer_coder.h"
+#include <omp.h>
 
 namespace zuckerli {
 
@@ -268,6 +269,7 @@ namespace zuckerli {
     std::vector<uint32_t> CompressedGraph::SampleNeighbors(size_t node_id, size_t num) {
         // TODO num 为-1时的处理，转为无符号后默认为最大的正整数,其实不处理也可以
         std::vector<uint32_t> dsts;
+        dsts.reserve(num);
         // 先获取节点对应的所有邻居。 TODO 后续可能要改写邻居获取方式，不能一直获取所有邻居。
         std::vector<uint32_t> nbrs = Neighbours(node_id);
         // TODO 选择其中的num个,看一下DGL中的随机数生成
@@ -323,6 +325,38 @@ namespace zuckerli {
         for (const auto &vec: nodes_dsts) {
             // 使用 insert() 将当前的 std::vector<uint32_t> 插入到 total 中
             total_dsts.insert(total_dsts.end(), vec.begin(), vec.end());
+        }
+
+        return std::make_pair(total_srcs, total_dsts);
+    }
+
+    std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+    CompressedGraph::SampleNeighborsParallel(const std::vector<uint32_t> &node_ids, uint32_t num) {
+        std::vector<std::vector<uint32_t>> nodes_srcs;
+        std::vector<std::vector<uint32_t>> nodes_dsts;
+        nodes_srcs.resize(node_ids.size());
+        nodes_dsts.resize(node_ids.size());
+
+#pragma omp parallel for
+        for (int i = 0; i < node_ids.size(); i++) {
+            nodes_dsts[i] = SampleNeighbors(node_ids[i], num);
+            nodes_srcs[i].assign(nodes_dsts[i].size(), node_ids[i]);
+        }
+
+        uint32_t total_nodes_num = 0;
+#pragma omp parallel for reduction(+:total_nodes_num)
+        for (int i = 0; i < nodes_dsts.size(); i++) {
+            total_nodes_num += nodes_dsts[i].size();
+        }
+
+        std::vector<uint32_t> total_srcs;
+        std::vector<uint32_t> total_dsts;
+        total_srcs.reserve(total_nodes_num);
+        total_dsts.reserve(total_nodes_num);
+
+        for (int i = 0; i < nodes_srcs.size(); i++) {
+            total_srcs.insert(total_srcs.end(), nodes_srcs[i].begin(), nodes_srcs[i].end());
+            total_dsts.insert(total_dsts.end(), nodes_dsts[i].begin(), nodes_dsts[i].end());
         }
 
         return std::make_pair(total_srcs, total_dsts);

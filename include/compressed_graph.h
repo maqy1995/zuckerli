@@ -35,6 +35,9 @@ class CompressedGraph {
   std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
   SampleNeighbors(const std::vector<uint32_t> &node_ids, uint32_t num);
 
+  std::pair<std::vector<uint32_t>, std::vector<uint32_t>>
+  SampleNeighborsParallel(const std::vector<uint32_t> &node_ids, uint32_t num);
+
  private:
   size_t num_nodes_;
   std::vector<uint8_t> compressed_;
