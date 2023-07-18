@@ -30,7 +30,7 @@ namespace zuckerli {
 
 // Only entropy-coded symbols smaller than this value are supported.
 static constexpr size_t kLogNumSymbols = 8;
-static constexpr size_t kNumSymbols = 1 << kLogNumSymbols;
+static constexpr size_t kNumSymbols = 1 << kLogNumSymbols; // =256
 
 // Only context ids smaller than this value are supported.
 static constexpr size_t kMaxNumContexts = 256;

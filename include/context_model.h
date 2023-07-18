@@ -21,26 +21,26 @@ ZKR_INLINE size_t SearchNum() {
 #endif
 };
 ZKR_INLINE size_t MaxNodesBackwards() { return SearchNum() + 1; };
-
+// 每个context对应一个概率分布？
 static constexpr size_t kFirstDegreeContext = 0;
 static constexpr size_t kDegreeBaseContext = 1;
-static constexpr size_t kNumDegreeContexts = 32;
+static constexpr size_t kNumDegreeContexts = 32; // 前32个context作为不同Degree的概率分布？
 static constexpr size_t kReferenceContextBase =
-    kDegreeBaseContext + kNumDegreeContexts;
-static constexpr size_t kNumReferenceContexts = 64;  // At most 64.
+    kDegreeBaseContext + kNumDegreeContexts; // =33
+static constexpr size_t kNumReferenceContexts = 64;  // At most 64. // 33-64作为reference的概率分布？
 static constexpr size_t kBlockCountContext =
-    kReferenceContextBase + kNumReferenceContexts;
-static constexpr size_t kBlockContext = kBlockCountContext + 1;
-static constexpr size_t kBlockContextEven = kBlockContext + 1;
-static constexpr size_t kBlockContextOdd = kBlockContextEven + 1;
-static constexpr size_t kFirstResidualBaseContext = kBlockContextOdd + 1;
+    kReferenceContextBase + kNumReferenceContexts; // =97
+static constexpr size_t kBlockContext = kBlockCountContext + 1; // =98
+static constexpr size_t kBlockContextEven = kBlockContext + 1; // =99
+static constexpr size_t kBlockContextOdd = kBlockContextEven + 1; // =100
+static constexpr size_t kFirstResidualBaseContext = kBlockContextOdd + 1; // =101
 static constexpr size_t kFirstResidualNumContexts = 32;
 static constexpr size_t kResidualBaseContext =
-    kFirstResidualBaseContext + kFirstResidualNumContexts;
+    kFirstResidualBaseContext + kFirstResidualNumContexts; // 101+32=133
 static constexpr size_t kNumResidualContexts = 80;  // Slightly lax bound
 // TODO: use number of remaining residuals as a ctx?
 static constexpr size_t kRleContext =
-    kResidualBaseContext + kNumResidualContexts;
+    kResidualBaseContext + kNumResidualContexts; // =213 Run-Length Encoding对应的context? zuckerli中压缩intervals时使用
 
 ZKR_INLINE size_t DegreeContext(size_t last_residual) {
   uint32_t token = IntegerCoder::Token(last_residual);

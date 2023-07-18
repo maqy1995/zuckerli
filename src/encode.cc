@@ -261,7 +261,7 @@ std::vector<uint8_t> EncodeGraph(const UncompressedGraph &g,
   std::vector<uint32_t> residuals;
   std::vector<uint32_t> blocks;
   std::vector<uint32_t> adj_block;
-  std::vector<std::vector<size_t>> symbol_count(kNumContexts);
+  std::vector<std::vector<size_t>> symbol_count(kNumContexts); // 对symbol进行统计计数的vector
   for (size_t i = 0; i < kNumContexts; i++) {
     symbol_count[i].resize(kNumSymbols, 0);
   }
@@ -293,7 +293,7 @@ std::vector<uint8_t> EncodeGraph(const UncompressedGraph &g,
       // No block copying.
       residuals.assign(g.Neighbours(i).begin(), g.Neighbours(i).end());
       ProcessResiduals(residuals, i, adj_block, allow_random_access, rle_undo,
-                       token_cost);
+                       token_cost); // 处理一个节点的邻居
       float cost = c;
       float base_cost = c;
       saved_costs[i] = 0;

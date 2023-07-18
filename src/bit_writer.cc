@@ -23,12 +23,12 @@ void BitWriter::Write(size_t nbits, size_t bits) {
   ZKR_DASSERT(bits >> nbits == 0);
   ZKR_DASSERT(nbits <= kMaxBitsPerCall);
 
-  uint8_t *ptr = &data_[bits_written_ / 8];
-  size_t used_bits = bits_written_ % 8;
-  bits <<= used_bits;
-  bits |= *ptr;
-  memcpy(ptr, &bits, sizeof(bits));
-  bits_written_ += nbits;
+  uint8_t *ptr = &data_[bits_written_ / 8]; // 以8bit为单位，缓冲区中当前待写入的位置
+  size_t used_bits = bits_written_ % 8; // 当前这个8bit中可能有些bit位已经用掉了，计算出已使用的bit数
+  bits <<= used_bits; // 写入的数据不能和已写入的bit冲突，进行左移规避掉这些bit，这里应该要保证不能溢出
+  bits |= *ptr; // 进行或操作，因为bits上一行已经空出来了used_bits位，相当于将used_bits嵌入到了待写入的bits中
+  memcpy(ptr, &bits, sizeof(bits)); // 将bits写入缓冲区，这里实际应该是会多copy一部分，但没有影响
+  bits_written_ += nbits; // 更新已写入到缓冲区的bits数量
 }
 
 void BitWriter::AppendAligned(const uint8_t *ptr, size_t cnt) {

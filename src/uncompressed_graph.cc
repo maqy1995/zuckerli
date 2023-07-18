@@ -23,7 +23,7 @@
 namespace zuckerli {
 
 MemoryMappedFile::MemoryMappedFile(const std::string &filename) {
-  struct stat st;
+  struct stat st; // 用于存储文件的元信息，例如文件的大小、访问权限、所有者，修改时间等
   int ret = stat(filename.c_str(), &st);
   ZKR_ASSERT(ret == 0);
   size_ = st.st_size;
@@ -32,7 +32,7 @@ MemoryMappedFile::MemoryMappedFile(const std::string &filename) {
   fd_ = open(filename.c_str(), O_RDONLY, 0);
   auto flags = MAP_SHARED;
 #ifdef __linux__
-  flags |= MAP_POPULATE;
+  flags |= MAP_POPULATE; // 该标志尽量将磁盘中的数据一开始就读取到内存中
 #endif
   data_ = (const uint32_t *)mmap(NULL, size_ * sizeof(uint32_t), PROT_READ,
                                  flags, fd_, 0);
