@@ -65,24 +65,24 @@ class IntegerCoder {
   static ZKR_INLINE void Encode(uint64_t value, size_t *ZKR_RESTRICT token,
                                 size_t *ZKR_RESTRICT nbits,
                                 size_t *ZKR_RESTRICT bits) {
-    uint32_t split_exponent = Log2NumExplicit();
-    uint32_t split_token = 1 << split_exponent;
-    uint32_t msb_in_token = NumTokenMSB();
-    uint32_t lsb_in_token = NumTokenLSB();
+    uint32_t split_exponent = Log2NumExplicit(); // 相当于论文2.2里的k
+    uint32_t split_token = 1 << split_exponent;  // 2^k
+    uint32_t msb_in_token = NumTokenMSB(); // 相当于论文中2.2节的i
+    uint32_t lsb_in_token = NumTokenLSB(); // 论文中2.2节的j
     ZKR_ASSERT(split_exponent >= lsb_in_token + msb_in_token);
     if (value < split_token) {
       *token = value;
       *nbits = 0;
       *bits = 0;
     } else {
-      uint32_t n = FloorLog2Nonzero(value);
-      uint32_t m = value - (1 << n);
-      *token = split_token +
-               ((n - split_exponent) << (msb_in_token + lsb_in_token)) +
-               ((m >> (n - msb_in_token)) << lsb_in_token) +
-               (m & ((1 << lsb_in_token) - 1));
-      *nbits = n - msb_in_token - lsb_in_token;
-      *bits = (value >> lsb_in_token) & ((1 << *nbits) - 1);
+      uint32_t n = FloorLog2Nonzero(value); // 得到Value的二进制表示中最高有效位的位置，从0开始计数
+      uint32_t m = value - (1 << n); // m是value去除最高位1之后的值
+      *token = split_token + // 2^k 计算论文2.2中的s= 2^k + (p-k-1)*2^(i+j) + m*2^j + l
+               ((n - split_exponent) << (msb_in_token + lsb_in_token)) + // n=p-1,对应(p-k-1)*2^(i+j)
+               ((m >> (n - msb_in_token)) << lsb_in_token) + // m*2^j
+               (m & ((1 << lsb_in_token) - 1)); // l
+      *nbits = n - msb_in_token - lsb_in_token; // 论文中t的位数
+      *bits = (value >> lsb_in_token) & ((1 << *nbits) - 1); // *bits中的后*nbits位即为t
     }
   }
   template <typename EntropyCoder>
@@ -117,7 +117,7 @@ class IntegerCoder {
     return sym_cost[ctx * kNumSymbols + token] + nbits;
   }
   static ZKR_INLINE size_t Token(uint64_t value) {
-    size_t token, nbits, bits;
+    size_t token, nbits, bits; // 论文2.2节的(s,t)，token为s，bits的后nbits位为t
     Encode(value, &token, &nbits, &bits);
     return token;
   }
@@ -190,10 +190,10 @@ class IntegerData {
   std::vector<uint8_t> ctxs_;
 };
 
-ZKR_INLINE uint64_t PackSigned(int64_t s) { return s < 0 ? 2 * -s - 1 : 2 * s; }
+ZKR_INLINE uint64_t PackSigned(int64_t s) { return s < 0 ? 2 * -s - 1 : 2 * s; } // 论文中的公式(1)，偶数为正数
 
 ZKR_INLINE int64_t UnpackSigned(uint64_t s) {
-  return s & 1 ? -((s + 1) >> 1) : s >> 1;
+  return s & 1 ? -((s + 1) >> 1) : s >> 1; // 对应还原
 }
 
 }  // namespace zuckerli

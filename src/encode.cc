@@ -21,7 +21,7 @@ ABSL_FLAG(bool, print_bits_breakdown, false,
 namespace zuckerli {
 
 namespace {
-// TODO: consider discarding short "copy" runs.
+// TODO: consider discarding short "copy" runs. i是当前节点id，ref是当前ref的值 进行block和residuals的处理
 void ComputeBlocksAndResiduals(const UncompressedGraph &g, size_t i, size_t ref,
                                std::vector<uint32_t> *blocks,
                                std::vector<uint32_t> *residuals) {
@@ -32,7 +32,7 @@ void ComputeBlocksAndResiduals(const UncompressedGraph &g, size_t i, size_t ref,
   size_t rpos = 0;
   bool is_same = true;
   blocks->push_back(0);
-  while (ipos < g.Degree(i) && rpos < g.Degree(i - ref)) {
+  while (ipos < g.Degree(i) && rpos < g.Degree(i - ref)) { // i-ref是当前比较节点
     size_t a = g.Neighbours(i)[ipos];
     size_t b = g.Neighbours(i - ref)[rpos];
     if (a == b) {
@@ -121,18 +121,18 @@ template <typename CB1, typename CB2>
 void ProcessResiduals(const std::vector<uint32_t> &residuals, size_t i,
                       const std::vector<uint32_t> &adj_block,
                       bool allow_random_access, CB1 undo_cb, CB2 cb) {
-  size_t ref = i;
+  size_t ref = i; // i是当前处理节点的id
   size_t last_delta = 0;
   size_t adj_pos = 0;
   size_t adj_lim = adj_block.size();
   size_t zero_run = 0;
-  for (size_t j = 0; j < residuals.size(); j++) {
+  for (size_t j = 0; j < residuals.size(); j++) { // 针对邻居中的每一个节点
     size_t ctx = 0;
-    if (j == 0) {
-      ctx = FirstResidualContext(residuals.size());
-      last_delta = PackSigned(int64_t(residuals[j]) - ref);
+    if (j == 0) { // 第一个邻居点单独处理分布信息？
+      ctx = FirstResidualContext(residuals.size()); // 根据邻居的数量，即度数来选择context
+      last_delta = PackSigned(int64_t(residuals[j]) - ref); // 只有第一个邻居需要处理负数
     } else {
-      ctx = ResidualContext(last_delta);
+      ctx = ResidualContext(last_delta); // 后续根据delta值来处理分布信息
       last_delta = residuals[j] - ref;
       while (adj_pos < adj_lim && adj_block[adj_pos] < ref) {
         adj_pos++;
@@ -143,7 +143,7 @@ void ProcessResiduals(const std::vector<uint32_t> &residuals, size_t i,
         adj_pos++;
       }
     }
-    if (last_delta != 0) {
+    if (last_delta != 0) { // 连续0大于kRleMin时进行相应处理
       if (zero_run >= kRleMin && allow_random_access) {
         for (size_t cnt = kRleMin; cnt < zero_run; cnt++) {
           undo_cb();
@@ -254,7 +254,7 @@ std::vector<uint8_t> EncodeGraph(const UncompressedGraph &g,
   IntegerData tokens;
   size_t ref = 0;
   size_t last_degree_delta = 0;
-  std::vector<size_t> references(N);
+  std::vector<size_t> references(N); // 存储reference
   std::vector<float> saved_costs(N);
 
   std::vector<float> symbol_cost(kNumContexts * kNumSymbols, 1.0f);
@@ -278,7 +278,7 @@ std::vector<uint8_t> EncodeGraph(const UncompressedGraph &g,
       c += IntegerCoder::Cost(ctx, v, symbol_cost.data());
       symbol_count[ctx][token]++;
     };
-    // Very rough estimate.
+    // Very rough estimate. (Run-Length Encoding)
     auto rle_undo = [&]() {
       c -= symbol_cost[kResidualBaseContext * kNumSymbols];
     };
@@ -290,14 +290,14 @@ std::vector<uint8_t> EncodeGraph(const UncompressedGraph &g,
     for (size_t i = 0; i < N; i++) {
       if (i % 32 == 0) fprintf(stderr, "%lu/%lu\r", i, N);
       c = 0;
-      // No block copying.
+      // No block copying. assign操作会销毁原始vector之中的值
       residuals.assign(g.Neighbours(i).begin(), g.Neighbours(i).end());
       ProcessResiduals(residuals, i, adj_block, allow_random_access, rle_undo,
-                       token_cost); // 处理一个节点的邻居
+                       token_cost); // 处理当前节点i的邻居
       float cost = c;
       float base_cost = c;
       saved_costs[i] = 0;
-
+      // reference相关
       for (size_t ref = 1; ref < std::min(SearchNum(), i) + 1; ref++) {
         if (greedy && chain_length[i - ref] >= kMaxChainLength) continue;
         adj_block.clear();
@@ -317,7 +317,7 @@ std::vector<uint8_t> EncodeGraph(const UncompressedGraph &g,
       if (references[i] != 0) {
         chain_length[i] = chain_length[i - references[i]] + 1;
       }
-    }
+    } // 第一次遍历完所有邻居并计算reference和chain
 
     // Ensure max reference chain length.
     if (allow_random_access && !greedy) {

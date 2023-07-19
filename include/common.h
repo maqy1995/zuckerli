@@ -62,9 +62,9 @@ template <typename T, typename U>
 constexpr ZKR_INLINE T DivCeil(T a, U b) {
   return (a + b - 1) / b;
 }
-
+// 计算给定无符号长长整型数 value 的二进制表示中，最高有效位（MSB，Most Significant Bit）的位置。位置从0开始计算
 ZKR_INLINE int FloorLog2Nonzero(uint64_t value) {
-  return 63 - __builtin_clzll(value);
+  return 63 - __builtin_clzll(value); // 用于计算无符号长长整型（unsigned long long）值的前导零位数（leading zero count）
 }
 
 #define ZKR_HONOR_FLAGS 0
