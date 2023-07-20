@@ -46,7 +46,7 @@ void BitWriter::Reserve(size_t nbits) {
   // Add padding to ensure memcpy does not write out of bounds.
   size_t required_size = (bits_written_ + nbits + 7) / 8 + sizeof(size_t);
   if (required_size > data_.size()) {
-    data_.resize(required_size);
+    data_.resize(required_size); // fixme(maqy)这里如果多次分配会高效吗？
   }
 }
 }  // namespace zuckerli

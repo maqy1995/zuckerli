@@ -23,7 +23,7 @@ find_package(OpenMP REQUIRED)
 #target_link_libraries(zuckerli absl::flags absl::flags_parse OpenMP::OpenMP_CXX)
 
 # 查找gflags库
-find_package(gflags REQUIRED)
+#find_package(gflags REQUIRED)
 #include_directories(${gflags_INCLUDE_DIRS})
 #link_directories(${gflags_LIBRARY_DIRS})
 

@@ -21,24 +21,24 @@ ABSL_FLAG(bool, print_bits_breakdown, false,
 namespace zuckerli {
 
 namespace {
-// TODO: consider discarding short "copy" runs. i是当前节点id，ref是当前ref的值 进行block和residuals的处理
-void ComputeBlocksAndResiduals(const UncompressedGraph &g, size_t i, size_t ref,
+// TODO: consider discarding short "copy" runs.
+void ComputeBlocksAndResiduals(const UncompressedGraph &g, size_t i, size_t ref, // i是当前节点id，ref是当前ref的值
                                std::vector<uint32_t> *blocks,
                                std::vector<uint32_t> *residuals) {
   blocks->clear();
   residuals->clear();
-  constexpr size_t kMinBlockLen = 0;
+  constexpr size_t kMinBlockLen = 0; // 这里是和上面的todo相关吗？因为后续的if一直不会成立
   size_t ipos = 0;
   size_t rpos = 0;
   bool is_same = true;
   blocks->push_back(0);
   while (ipos < g.Degree(i) && rpos < g.Degree(i - ref)) { // i-ref是当前比较节点
-    size_t a = g.Neighbours(i)[ipos];
-    size_t b = g.Neighbours(i - ref)[rpos];
+    size_t a = g.Neighbours(i)[ipos]; // a是当前节点的邻居id
+    size_t b = g.Neighbours(i - ref)[rpos]; // b是ref的邻居id
     if (a == b) {
       ipos++;
       rpos++;
-      if (!is_same) {
+      if (!is_same) { // 不是连续的相等的话，需要新的blocks
         blocks->emplace_back(0);
       }
       blocks->back()++;
@@ -46,24 +46,25 @@ void ComputeBlocksAndResiduals(const UncompressedGraph &g, size_t i, size_t ref,
     } else if (a < b) {
       ipos++;
       residuals->push_back(a);
-    } else {  // a > b
-      if (is_same) {
+    } else {  // a > b,
+      if (is_same) { // 不是连续的不相等的话，需要新的blocks
         blocks->emplace_back(0);
       }
       blocks->back()++;
       is_same = false;
       rpos++;
     }
-  }
-  if (ipos != g.Degree(i)) {
+  } // 经过这里的循环得到了copy blocks中的连续块的各个大小，从1开始计数
+  if (ipos != g.Degree(i)) { // 处理当前节点剩下的邻居放入residuals中
     for (size_t j = ipos; j < g.Degree(i); j++) {
       residuals->push_back(g.Neighbours(i)[j]);
     }
   }
   size_t pos = 0;
-  size_t cur = 1;
+  size_t cur = 1; // 为什么从1开始？如果初始的blocks就包含感觉似乎不太对？
+  // fixme 这段代码应该可以注释掉暂时不使用
   bool include = false;
-  for (size_t k = 1; k < blocks->size(); k++) {
+  for (size_t k = 1; k < blocks->size(); k++) { // 可以将小于minBlockLen的长度的点放回residuals中
     if (include && (*blocks)[k] < kMinBlockLen && k + 1 < blocks->size()) {
       size_t add = (*blocks)[k];
       size_t skip = (*blocks)[k + 1];
@@ -72,15 +73,15 @@ void ComputeBlocksAndResiduals(const UncompressedGraph &g, size_t i, size_t ref,
         residuals->push_back(g.Neighbours(i)[pos + j]);
       }
       pos += add + skip;
-      k++;
+      k++; // 注意这里再次k++
     } else {
       (*blocks)[cur++] = (*blocks)[k];
       pos += (*blocks)[k];
-      include = !include;
+      include = !include; //
     }
   }
   std::sort(residuals->begin(), residuals->end());
-  if (rpos == g.Degree(i - ref) || !is_same) {
+  if (rpos == g.Degree(i - ref) || !is_same) { // 去除最后一个不必要的blocks? 这个判断条件还没太懂
     blocks->pop_back();
   }
 }
